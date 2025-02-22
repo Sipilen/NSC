@@ -322,8 +322,8 @@ input[type='range']::-moz-range-thumb {
         }
 
         .loading-spinner {
-            width: 60px;
-            height: 60px;
+            width: 150px;
+            height: 150px;
             animation: spin 1s linear infinite;
         }
 
@@ -354,7 +354,7 @@ input[type='range']::-moz-range-thumb {
         <div class="loading-spinner">
             <img src="NewPlayer/icons/loading-icon.png" alt="Loading">
         </div>
-        <p>Загрузка...</p>
+        <p>Жди, жук</p>
     </div>
     </style>
 </head>
@@ -484,7 +484,7 @@ document.getElementById('volume').addEventListener('input', setVolume);
             currentTrackIndex = index;
             changeTrack();
             playPauseIcon.src = "NewPlayer/icons/pause.png";
-        }
+        
 
         function changeTrack() {
             audio.src = tracks[currentTrackIndex].src;

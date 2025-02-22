@@ -516,8 +516,8 @@ preloadResources().then(() => {
             audio.load();
             highlightCurrentTrack();
             audio.play().catch(error => {
-                console.error("Ошибка воспроизведения:", error);
-                alert("Ошибка воспроизведения трека. Проверьте файл.");
+                console.error("Произошла какая-то хуйня:", error);
+                alert("Эт крч файл какого-то хуя не загрузился, попробуй ещё раз");
             });
             playPauseIcon.src = "NewPlayer/icons/pause.png";
         }

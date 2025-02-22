@@ -285,6 +285,8 @@ input[type='range']::-moz-range-thumb {
             background-color: rgba(255, 255, 255, 0.2);
         }
 
+
+        
         /* Адаптивность */
         @media (max-width: 600px) {
             .player {
@@ -303,6 +305,57 @@ input[type='range']::-moz-range-thumb {
                 left: 10px;
             }
         }
+
+        /* Стили для экрана загрузки */
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            width: 120px;
+            height: 120px;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-spinner img {
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #loadingScreen p {
+            margin-top: 15px;
+            font-size: 18px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Экран загрузки -->
+    <div id="loadingScreen">
+        <div class="loading-spinner">
+            <img src="NewPlayer/icons/loading-icon.png" alt="Loading">
+        </div>
+        <p>Жди, жук</p>
+    </div>
     </style>
 </head>
 <body>
@@ -393,6 +446,51 @@ document.getElementById('volume').addEventListener('input', setVolume);
         const trackList = document.getElementById('trackList');
         const playPauseIcon = document.getElementById('playPauseIcon');
 
+         // Функция для предварительной загрузки всех ресурсов
+         function preloadResources() {
+            const promises = [];
+
+            // Загрузка аудио
+            tracks.forEach(track => {
+                const audio = new Audio();
+                audio.src = track.src;
+                promises.push(new Promise((resolve) => {
+                    audio.onloadeddata = resolve;
+                }));
+            });
+
+            // Загрузка изображений треков
+            tracks.forEach(track => {
+                const img = new Image();
+                img.src = track.image;
+                promises.push(new Promise((resolve) => {
+                    img.onload = resolve;
+                }));
+            });
+
+            // Загрузка фоновых изображений
+            for (let i = 1; i <= 10; i++) {
+                const img = new Image();
+                img.src = `NewPlayer/icons/background${i}.jpg`;
+                promises.push(new Promise((resolve) => {
+                    img.onload = resolve;
+                }));
+            }
+
+            return Promise.all(promises);
+        }
+
+        // Ожидание загрузки всех ресурсов перед отображением контента
+preloadResources().then(() => {
+    // Скрываем экран загрузки
+    document.getElementById('loadingScreen').style.display = 'none';
+    // Показываем основной контент
+    document.body.classList.add('loaded'); // Добавляем класс для отображения контента
+    loadTrackList();
+    audio.src = tracks[currentTrackIndex].src;
+    playPauseIcon.src = "NewPlayer/icons/play.png";
+});
+
         function loadTrackList() {
             trackList.innerHTML = tracks.map((track, index) => 
                 `<li onclick="selectTrack(${index})" id="track${index}">
@@ -418,8 +516,8 @@ document.getElementById('volume').addEventListener('input', setVolume);
             audio.load();
             highlightCurrentTrack();
             audio.play().catch(error => {
-                console.error("Ошибка воспроизведения:", error);
-                alert("Ошибка воспроизведения трека. Проверьте файл.");
+                console.error("Произошла какая-то хуйня:", error);
+                alert("Эт крч файл какого-то хуя не загрузился, попробуй ещё раз");
             });
             playPauseIcon.src = "NewPlayer/icons/pause.png";
         }
