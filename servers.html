@@ -1,33 +1,29 @@
 <!DOCTYPE html>
 <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="twitter:image:src" content="assets/index-meta.png">
-        <meta property="og:image" content="assets/index-meta.png">
-        <meta name="twitter:title" content="NightSoftCorp">
-        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-        <link rel="shortcut icon" href="assets/nsc-6-128x128.png" type="image/x-icon">
-        <meta name="description" content="Лучшие из лучших | Matrix/Intave.
-      Matix Premium, Bonan, Andromeda, ANANAS, AutoTool.
-      Rick Sipilen Mr_Cheatr2222 ananasanonimen ShareX client Slinky Tarasande ThunderHack Vestige Gugustus AugustusX h3llo_w0rld Nightly_Hack extremeee goodgame LiquidBounce NextGen Raven Rise LiquidBounce Meteor Azarat dicves sumandora dabokin Akrien Acrimony Augustus Breeze Eject Gothaj читы майнкрафт клиент майнкрафт целестиал кряк celestial кряк NSC чит нск клиент найтсофткорп nursultan кряк bonan client ANANAS client vape v4 кряк конфиги скачать forscraft hypemc minelegacy fdp client Akrien Acrimony Augustus майнкрафт читы mineblaze minecraft cheats">
-      <title>NightSoftCorp</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="twitter:image:src" content="assets/index-meta.png">
+    <meta property="og:image" content="assets/index-meta.png">
+    <meta name="twitter:title" content="NightSoftCorp - Серверы">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <link rel="shortcut icon" href="assets/nsc-6-128x128.png" type="image/x-icon">
+    <meta name="description" content="Сервера">
+    <title>NightSoftCorp - Сервера</title>
     <style>
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
         
-
-* {
-    -webkit-user-select: none; 
-    -moz-user-select: none;    
-    -ms-user-select: none;     
-    user-select: none;         
-}
-
-
-input, textarea {
-    -webkit-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
-    user-select: text;
-}
         @font-face {
             font-family: 'NightSoftFont';
             src: url('assets/mostwaztedrusbylyajka.otf') format('woff2');
@@ -38,15 +34,11 @@ input, textarea {
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             color: white;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
             background-color: #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             font-family: Arial, sans-serif;
         }
 
@@ -171,7 +163,6 @@ input, textarea {
             }
         }
 
-
         .overlay {
             position: fixed;
             top: 0;
@@ -184,8 +175,8 @@ input, textarea {
 
         .logo {
             font-family: 'NightSoftFont', 'Arial', sans-serif;
-            font-size: 6rem;
-            margin-bottom: 60px;
+            font-size: 4rem;
+            margin: 30px 0;
             text-align: center;
             text-shadow: 0 0 15px rgba(98, 0, 255, 0.7), 
                          0 0 30px rgba(76, 0, 255, 0.5),
@@ -211,6 +202,92 @@ input, textarea {
             }
         }
 
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2rem;
+            text-shadow: 0 0 10px rgba(98, 0, 255, 0.5);
+            z-index: 2;
+            position: relative;
+        }
+
+        .servers-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .server-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            width: 300px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .server-card:hover {
+            transform: translateY(-5px);
+            border: 1px solid rgba(76, 0, 255, 0.4);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .server-name {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(132, 0, 255, 0.5);
+        }
+
+        .server-description {
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            color: #cccccc;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .server-ip {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .server-ip:hover {
+            background: rgba(76, 0, 255, 0.2);
+        }
+
+        .server-ip.copied::after {
+            content: "Скопировано!";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(76, 0, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
         .buttons-container {
             display: flex;
             flex-wrap: wrap;
@@ -219,6 +296,7 @@ input, textarea {
             max-width: 900px;
             gap: 50px;
             z-index: 2;
+            margin: 40px auto;
         }
 
         .btn-wrapper {
@@ -233,8 +311,8 @@ input, textarea {
         }
 
         .btn {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             transition: all 0.3s ease;
             cursor: pointer;
             border-radius: 50%;
@@ -254,9 +332,10 @@ input, textarea {
             opacity: 0.9;
             transition: all 0.3s ease;
         }
+
         .btn-wrapper:nth-child(4) .btn img {
-    transform: translateX(-2.3px) translateY(1px); 
-}
+            transform: translateX(-2.3px) translateY(1px); 
+        }
 
         .btn:hover {
             background: rgba(255, 255, 255, 0.15);
@@ -283,33 +362,6 @@ input, textarea {
             opacity: 1;
             text-shadow: 0 0 8px rgba(132, 0, 255, 0.5);
         }
-
-
-        @media (max-width: 768px) {
-            .logo {
-                font-size: 2.5rem;
-                margin-bottom: 40px;
-            }
-            
-            .buttons-container {
-                flex-direction: column;
-                gap: 40px;
-            }
-            
-            .btn {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .btn-label {
-                font-size: 0.9rem;
-            }
-            
-            .gradient-bg {
-                filter: blur(50px);
-            }
-        }
-
 
         .particles {
             position: fixed;
@@ -339,25 +391,99 @@ input, textarea {
                 opacity: 0;
             }
         }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+                margin: 20px 0;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+                margin-bottom: 30px;
+            }
+            
+            .servers-container {
+                gap: 20px;
+                padding: 15px;
+            }
+            
+            .server-card {
+                width: 100%;
+                max-width: 320px;
+            }
+            
+            .buttons-container {
+                gap: 30px;
+                margin: 30px auto;
+            }
+            
+            .btn {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .btn-label {
+                font-size: 0.9rem;
+            }
+            
+            .gradient-bg {
+                filter: blur(50px);
+            }
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(76, 0, 255, 0.4);
+        }
+
+        .back-btn img {
+            width: 60%;
+            filter: brightness(0) invert(1);
+        }
     </style>
 </head>
 <body>
-
     <div class="gradient-bg">
         <div class="gradient gradient-1"></div>
         <div class="gradient gradient-2"></div>
         <div class="gradient gradient-3"></div>
     </div>
     
- 
     <div class="overlay"></div>
     
     <div class="particles" id="particles"></div>
+
+    <a href="index.html" class="back-btn">
+        <img src="assets/back-arrow.png" alt="Назад">
+    </a>
     
     <div class="logo">NightSoftCorp</div>
+    <div class="page-title">Наши сервера и сервера-партнёры</div>
+    
+    <div class="servers-container" id="servers-container">
+        <!-- Серверы будут добавлены через JavaScript -->
+    </div>
     
     <div class="buttons-container">
-
         <div class="btn-wrapper">
             <a href="https://discord.com/invite/NgN2wAVDbc" target="_blank">
                 <div class="btn">
@@ -367,7 +493,6 @@ input, textarea {
             <div class="btn-label">Discord</div>
         </div>
         
-  
         <div class="btn-wrapper">
             <a href="https://docs.google.com/spreadsheets/d/1ezSA8Vf4g-1P_oB8RsWECWYgpJpftIvnTi0UVipReO0/edit?usp=sharing" target="_blank">
                 <div class="btn">
@@ -377,17 +502,6 @@ input, textarea {
             <div class="btn-label">Список слабомуных</div>
         </div>
         
-
-        <div class="btn-wrapper">
-            <a href="servers.html">
-                <div class="btn">
-                    <img src="assets/server.png" alt="Сервера">
-                </div>
-            </a>
-            <div class="btn-label">Сервера</div>
-        </div>
-        
-
         <div class="btn-wrapper">
             <a href="https://t.me/NightSoftCorp" target="_blank">
                 <div class="btn">
@@ -395,13 +509,12 @@ input, textarea {
                 </div>
             </a>
             <div class="btn-label">Telegram</div>
-            
         </div>
     </div>
 
     <script>
- 
         document.addEventListener('DOMContentLoaded', function() {
+            // Создание частиц
             const particlesContainer = document.getElementById('particles');
             const particleCount = 50;
             
@@ -409,7 +522,6 @@ input, textarea {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
                 
-
                 const size = Math.random() * 5 + 2;
                 const posX = Math.random() * 100;
                 const delay = Math.random() * 15;
@@ -424,7 +536,7 @@ input, textarea {
                 particlesContainer.appendChild(particle);
             }
             
-
+            // Анимация кнопок
             const buttons = document.querySelectorAll('.btn');
             buttons.forEach((btn, index) => {
                 btn.style.opacity = '0';
@@ -435,6 +547,91 @@ input, textarea {
                     btn.style.opacity = '1';
                     btn.style.transform = 'translateY(0)';
                 }, 200 * index);
+            });
+            
+            // Данные серверов
+            const servers = [
+                {
+                    name: "Школа секса",
+                    description: "Наш смешной сервер",
+                    ip: "play.nightsoftcorp.com"
+                },
+                {
+                    name: "MineGame",
+                    description: "Наш крупнейший сервер",
+                    ip: "minegame.net"
+                },
+                {
+                    name: "EnergyGrief",
+                    description: "Сервер-партнёр (Обеспечение защиты сервера)",
+                    ip: "mc.energygrief.net"
+                },
+                {
+                    name: "ForceMine",
+                    description: "Сервер-партнёр (Обеспечение защиты сервера)",
+                    ip: "mc.forcemine.net"
+                },
+                {
+                    name: "WildGrief",
+                    description: "Сервер-партнёр (Обеспечение защиты сервера)",
+                    ip: "mc.wildgrief.net"
+                },
+                {
+                    name: "MigosMc",
+                    description: "Сервер-партнёр (Помощь в развитии тех-части)",
+                    ip: "mc.migosmc.net"
+                }
+            ];
+            
+            // Отображение серверов
+            const serversContainer = document.getElementById('servers-container');
+            
+            servers.forEach((server, index) => {
+                const serverCard = document.createElement('div');
+                serverCard.classList.add('server-card');
+                serverCard.style.opacity = '0';
+                serverCard.style.transform = 'translateY(30px)';
+                
+                serverCard.innerHTML = `
+                    <h3 class="server-name">${server.name}</h3>
+                    <p class="server-description">${server.description}</p>
+                    <div class="server-ip" data-ip="${server.ip}">${server.ip}</div>
+                `;
+                
+                serversContainer.appendChild(serverCard);
+                
+                // Анимация появления карточек
+                setTimeout(() => {
+                    serverCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    serverCard.style.opacity = '1';
+                    serverCard.style.transform = 'translateY(0)';
+                }, 300 + (index * 100));
+                
+                // Обработчик копирования IP
+                const ipElement = serverCard.querySelector('.server-ip');
+                ipElement.addEventListener('click', function() {
+                    const ip = this.getAttribute('data-ip');
+                    navigator.clipboard.writeText(ip).then(() => {
+                        this.classList.add('copied');
+                        setTimeout(() => {
+                            this.classList.remove('copied');
+                        }, 1500);
+                    }).catch(err => {
+                        console.error('Ошибка при копировании: ', err);
+                        // Fallback для старых браузеров
+                        const textArea = document.createElement('textarea');
+                        textArea.value = ip;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        
+                        this.classList.add('copied');
+                        setTimeout(() => {
+                            this.classList.remove('copied');
+                        }, 1500);
+                    });
+                });
             });
         });
     </script>
