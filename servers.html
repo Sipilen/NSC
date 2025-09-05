@@ -480,7 +480,7 @@
     <div class="page-title">Наши сервера и сервера-партнёры</div>
     
     <div class="servers-container" id="servers-container">
-        <!-- Серверы будут добавлены через JavaScript -->
+
     </div>
     
     <div class="buttons-container">
@@ -514,7 +514,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Создание частиц
+ 
             const particlesContainer = document.getElementById('particles');
             const particleCount = 50;
             
@@ -536,7 +536,7 @@
                 particlesContainer.appendChild(particle);
             }
             
-            // Анимация кнопок
+
             const buttons = document.querySelectorAll('.btn');
             buttons.forEach((btn, index) => {
                 btn.style.opacity = '0';
@@ -549,7 +549,7 @@
                 }, 200 * index);
             });
             
-            // Данные серверов
+
             const servers = [
                 {
                     name: "Школа секса",
@@ -583,7 +583,7 @@
                 }
             ];
             
-            // Отображение серверов
+
             const serversContainer = document.getElementById('servers-container');
             
             servers.forEach((server, index) => {
@@ -600,14 +600,14 @@
                 
                 serversContainer.appendChild(serverCard);
                 
-                // Анимация появления карточек
+
                 setTimeout(() => {
                     serverCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                     serverCard.style.opacity = '1';
                     serverCard.style.transform = 'translateY(0)';
                 }, 300 + (index * 100));
                 
-                // Обработчик копирования IP
+
                 const ipElement = serverCard.querySelector('.server-ip');
                 ipElement.addEventListener('click', function() {
                     const ip = this.getAttribute('data-ip');
@@ -618,7 +618,6 @@
                         }, 1500);
                     }).catch(err => {
                         console.error('Ошибка при копировании: ', err);
-                        // Fallback для старых браузеров
                         const textArea = document.createElement('textarea');
                         textArea.value = ip;
                         document.body.appendChild(textArea);
