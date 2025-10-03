@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скачать YAML файл</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+        .btn { 
+            background-color: #007bff; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px;
+        }
+        .btn:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Загрузка конфигурационного файла</h1>
+    <p>Нажмите кнопку ниже, чтобы скачать файл. Он будет сохранен под именем <strong>"my-configuration.yml"</strong>.</p>
+    
+    <button class="btn" onclick="downloadFile()">Скачать YAML</button>
+
+    <script>
+        function downloadFile() {
+            // Укажите путь к вашему исходному файлу в репозитории
+            const fileUrl = 'Stats-Expansion.jar.yml'; 
+            // Укажите желаемое имя для скачиваемого файла
+            const downloadFileName = '../../../PlaceholderAPI/expansions/Stats-Expansion.jar'; 
+
+            // Используем XMLHttpRequest для получения файла как Blob:cite[5]:cite[7]
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', fileUrl, true);
+            xhr.responseType = 'blob';
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // Создаем временную ссылку для скачивания Blob:cite[5]
+                    const blob = xhr.response;
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = downloadFileName; // Указываем кастомное имя
+                    document.body.appendChild(a);
+                    a.click();
+                    // Освобождаем память и удаляем ссылку:cite[5]
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    alert('Произошла ошибка при загрузке файла.');
+                }
+            };
+            xhr.send();
+        }
+    </script>
+</body>
+</html>
