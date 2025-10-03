@@ -1,0 +1,7 @@
+RewriteEngine On
+
+# Перенаправляем запросы к /download.yml на наш скрипт
+RewriteRule ^download\.yml$ download.yml.php [L]
+
+# Или для любого YML-файла
+RewriteRule ^.*\.yml$ download.yml.php [L]
