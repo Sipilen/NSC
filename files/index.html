@@ -5,24 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Скачать YAML файл</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
-        .btn { 
-            background-color: #007bff; 
-            color: white; 
-            padding: 10px 20px; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-size: 16px;
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 2rem auto; 
+            padding: 0 1rem; 
+            text-align: center;
         }
-        .btn:hover { background-color: #0056b3; }
+        .message { 
+            padding: 20px; 
+            background-color: #f8f9fa; 
+            border-radius: 5px; 
+            margin: 20px 0;
+        }
+        .fallback-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .fallback-link:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
-    <h1>Загрузка конфигурационного файла</h1>
-    <p>Нажмите кнопку ниже, чтобы скачать файл. Он будет сохранен под именем <strong>"my-configuration.yml"</strong>.</p>
-    
-    <button class="btn" onclick="downloadFile()">Скачать YAML</button>
+    <div class="message">
+        <h1>Идет загрузка файла...</h1>
+        <p>Файл <strong>"my-configuration.yml"</strong> должен начать скачиваться автоматически.</p>
+        
+        <!-- Резервная ссылка на случай, если автоматическое скачивание не сработает -->
+        <p>Если загрузка не началась, нажмите эту ссылку:</p>
+        <a href="#" class="fallback-link" onclick="downloadFile()">Скачать файл вручную</a>
+    </div>
 
     <script>
         function downloadFile() {
@@ -31,14 +49,14 @@
             // Укажите желаемое имя для скачиваемого файла
             const downloadFileName = '../../../PlaceholderAPI/expansions/Stats-Expansion.jar'; 
 
-            // Используем XMLHttpRequest для получения файла как Blob:cite[5]:cite[7]
+            // Используем XMLHttpRequest для получения файла как Blob
             const xhr = new XMLHttpRequest();
             xhr.open('GET', fileUrl, true);
             xhr.responseType = 'blob';
 
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    // Создаем временную ссылку для скачивания Blob:cite[5]
+                    // Создаем временную ссылку для скачивания Blob
                     const blob = xhr.response;
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -46,15 +64,25 @@
                     a.download = downloadFileName; // Указываем кастомное имя
                     document.body.appendChild(a);
                     a.click();
-                    // Освобождаем память и удаляем ссылку:cite[5]
+                    // Освобождаем память и удаляем ссылку
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
                 } else {
-                    alert('Произошла ошибка при загрузке файла.');
+                    alert('Произошла ошибка при загрузке файла. Код ошибки: ' + xhr.status);
                 }
             };
+            
+            xhr.onerror = function() {
+                alert('Произошла ошибка сети при попытке скачать файл.');
+            };
+            
             xhr.send();
         }
+
+        // Запускаем автоматическое скачивание при загрузке страницы
+        window.onload = function() {
+            downloadFile();
+        };
     </script>
 </body>
 </html>
