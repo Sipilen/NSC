@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Монитор соединений</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .connection-row { transition: all 0.3s; }
+        .connection-row:hover { background-color: #f1f3f4; }
+        .excluded { opacity: 0.6; background-color: #ffeaea; }
+        .excluded:hover { background-color: #ffd6d6; }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <header class="mb-4">
+            <h1 class="display-5"><i class="bi bi-globe2"></i> Монитор сетевых соединений</h1>
+            <p class="lead">Последние 10 исходящих соединений с определением города</p>
+        </header>
+
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-wifi"></i> Последние соединения</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>IP-адрес</th>
+                                        <th>Порт</th>
+                                        <th>Город</th>
+                                        <th>Страна</th>
+                                        <th>Время</th>
+                                        <th>Статус</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="connectionsTable">
+                                    <!-- Данные будут загружены через JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3">
+                            <button class="btn btn-outline-primary" id="refreshBtn">
+                                <i class="bi bi-arrow-clockwise"></i> Обновить
+                            </button>
+                            <div>
+                                <span class="badge bg-info">Всего: <span id="totalCount">0</span></span>
+                                <span class="badge bg-success ms-2">Активные: <span id="activeCount">0</span></span>
+                                <span class="badge bg-danger ms-2">Исключено: <span id="excludedCount">0</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header bg-warning">
+                        <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Исключения IP (BCrypt)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Добавить IP для исключения:</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="ipInput" placeholder="Например: 192.168.1.1">
+                                <button class="btn btn-warning" id="addIpBtn">Добавить</button>
+                            </div>
+                            <div class="form-text">IP будет зашифрован с помощью BCrypt</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Проверить IP в исключениях:</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="checkIpInput" placeholder="Введите IP">
+                                <button class="btn btn-info" id="checkIpBtn">Проверить</button>
+                            </div>
+                            <div id="checkResult" class="mt-2"></div>
+                        </div>
+
+                        <div class="border-top pt-3">
+                            <h6>Список исключений (хэши BCrypt):</h6>
+                            <div class="bg-light p-3 rounded" style="max-height: 200px; overflow-y: auto;">
+                                <ul id="exceptionsList" class="list-unstyled mb-0">
+                                    <!-- Список исключений -->
+                                </ul>
+                            </div>
+                            <button class="btn btn-outline-danger btn-sm mt-2" id="clearExceptionsBtn">
+                                <i class="bi bi-trash"></i> Очистить все
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-info">
+                        <h5 class="mb-0"><i class="bi bi-info-circle"></i> Информация</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Это демонстрационный сайт для мониторинга соединений.</p>
+                        <ul>
+                            <li>Данные соединений генерируются случайно</li>
+                            <li>IP-адреса проверяются на исключения</li>
+                            <li>Города определяются по публичным IP</li>
+                            <li>Исключения шифруются с помощью BCrypt</li>
+                        </ul>
+                        <div class="alert alert-secondary small">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Примечание:</strong> На GitHub Pages нет бэкенда, поэтому данные генерируются на клиенте, а BCrypt работает в браузере.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для информации о соединении -->
+    <div class="modal fade" id="connectionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Детали соединения</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">IP-адрес:</dt>
+                        <dd class="col-sm-8" id="modalIp"></dd>
+                        
+                        <dt class="col-sm-4">Порт:</dt>
+                        <dd class="col-sm-8" id="modalPort"></dd>
+                        
+                        <dt class="col-sm-4">Город:</dt>
+                        <dd class="col-sm-8" id="modalCity"></dd>
+                        
+                        <dt class="col-sm-4">Страна:</dt>
+                        <dd class="col-sm-8" id="modalCountry"></dd>
+                        
+                        <dt class="col-sm-4">Время:</dt>
+                        <dd class="col-sm-8" id="modalTime"></dd>
+                        
+                        <dt class="col-sm-4">Статус:</dt>
+                        <dd class="col-sm-8" id="modalStatus"></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключаем BCrypt библиотеку -->
+    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Основной объект приложения
+        const App = {
+            // Исключенные IP (хранятся как BCrypt хэши)
+            excludedIpHashes: JSON.parse(localStorage.getItem('excludedIpHashes')) || [],
+            
+            // Список городов для случайной генерации
+            cities: [
+                { city: "Москва", country: "Россия" },
+                { city: "Санкт-Петербург", country: "Россия" },
+                { city: "Нью-Йорк", country: "США" },
+                { city: "Лондон", country: "Великобритания" },
+                { city: "Берлин", country: "Германия" },
+                { city: "Токио", country: "Япония" },
+                { city: "Пекин", country: "Китай" },
+                { city: "Сидней", country: "Австралия" },
+                { city: "Париж", country: "Франция" },
+                { city: "Сингапур", country: "Сингапур" }
+            ],
+            
+            // Генерация случайного IP
+            generateRandomIp: function() {
+                // Генерируем разные диапазоны IP для разнообразия
+                const ranges = [
+                    () => `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+                    () => `10.0.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+                    () => `172.16.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+                    () => `${Math.floor(Math.random() * 223) + 1}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`
+                ];
+                return ranges[Math.floor(Math.random() * ranges.length)]();
+            },
+            
+            // Генерация случайных соединений
+            generateConnections: function(count = 10) {
+                const connections = [];
+                const now = new Date();
+                
+                for (let i = 0; i < count; i++) {
+                    const cityData = this.cities[Math.floor(Math.random() * this.cities.length)];
+                    const ip = this.generateRandomIp();
+                    
+                    // Проверяем, исключен ли IP
+                    const isExcluded = this.checkIfIpExcluded(ip);
+                    
+                    // Случайное время в пределах последних 24 часов
+                    const time = new Date(now.getTime() - Math.random() * 24 * 60 * 60 * 1000);
+                    
+                    connections.push({
+                        id: i + 1,
+                        ip: ip,
+                        port: Math.floor(Math.random() * 65535) + 1,
+                        city: cityData.city,
+                        country: cityData.country,
+                        timestamp: time,
+                        isExcluded: isExcluded
+                    });
+                }
+                
+                // Сортируем по времени (новые сверху)
+                return connections.sort((a, b) => b.timestamp - a.timestamp);
+            },
+            
+            // Хэширование IP с помощью BCrypt
+            hashIp: async function(ip) {
+                // Используем соль для дополнительной безопасности
+                const salt = bcrypt.genSaltSync(10);
+                return bcrypt.hashSync(ip, salt);
+            },
+            
+            // Проверка IP в исключениях
+            checkIfIpExcluded: function(ip) {
+                for (const hash of this.excludedIpHashes) {
+                    if (bcrypt.compareSync(ip, hash)) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            
+            // Добавление IP в исключения
+            addIpToExclusions: async function(ip) {
+                // Проверяем валидность IP
+                if (!this.isValidIp(ip)) {
+                    return { success: false, message: "Неверный формат IP-адреса" };
+                }
+                
+                // Проверяем, не исключен ли уже этот IP
+                if (this.checkIfIpExcluded(ip)) {
+                    return { success: false, message: "Этот IP уже в списке исключений" };
+                }
+                
+                // Хэшируем IP
+                const hash = await this.hashIp(ip);
+                this.excludedIpHashes.push(hash);
+                
+                // Сохраняем в localStorage
+                localStorage.setItem('excludedIpHashes', JSON.stringify(this.excludedIpHashes));
+                
+                return { success: true, message: "IP успешно добавлен в исключения" };
+            },
+            
+            // Проверка валидности IP
+            isValidIp: function(ip) {
+                const ipPattern = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+                return ipPattern.test(ip);
+            },
+            
+            // Очистка всех исключений
+            clearAllExceptions: function() {
+                this.excludedIpHashes = [];
+                localStorage.removeItem('excludedIpHashes');
+                return { success: true, message: "Все исключения очищены" };
+            },
+            
+            // Отображение соединений в таблице
+            renderConnections: function(connections) {
+                const tbody = document.getElementById('connectionsTable');
+                tbody.innerHTML = '';
+                
+                let activeCount = 0;
+                let excludedCount = 0;
+                
+                connections.forEach(conn => {
+                    const row = document.createElement('tr');
+                    row.className = `connection-row ${conn.isExcluded ? 'excluded' : ''}`;
+                    row.innerHTML = `
+                        <td>${conn.id}</td>
+                        <td><span class="font-monospace">${conn.ip}</span></td>
+                        <td>${conn.port}</td>
+                        <td>${conn.city}</td>
+                        <td>${conn.country}</td>
+                        <td>${conn.timestamp.toLocaleTimeString()}<br>
+                            <small class="text-muted">${conn.timestamp.toLocaleDateString()}</small>
+                        </td>
+                        <td>
+                            ${conn.isExcluded ? 
+                                '<span class="badge bg-danger"><i class="bi bi-slash-circle"></i> Исключен</span>' : 
+                                '<span class="badge bg-success"><i class="bi bi-check-circle"></i> Активен</span>'}
+                        </td>
+                    `;
+                    
+                    // Добавляем обработчик клика для показа деталей
+                    row.addEventListener('click', () => this.showConnectionDetails(conn));
+                    
+                    tbody.appendChild(row);
+                    
+                    if (conn.isExcluded) {
+                        excludedCount++;
+                    } else {
+                        activeCount++;
+                    }
+                });
+                
+                // Обновляем счетчики
+                document.getElementById('totalCount').textContent = connections.length;
+                document.getElementById('activeCount').textContent = activeCount;
+                document.getElementById('excludedCount').textContent = excludedCount;
+            },
+            
+            // Отображение списка исключений
+            renderExceptions: function() {
+                const list = document.getElementById('exceptionsList');
+                
+                if (this.excludedIpHashes.length === 0) {
+                    list.innerHTML = '<li class="text-muted"><em>Нет исключений</em></li>';
+                    return;
+                }
+                
+                list.innerHTML = this.excludedIpHashes.map((hash, index) => `
+                    <li class="mb-2">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="font-monospace small text-break">${hash.substring(0, 30)}...</div>
+                            <button class="btn btn-sm btn-outline-danger remove-exception-btn" data-index="${index}">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                    </li>
+                `).join('');
+                
+                // Добавляем обработчики для кнопок удаления
+                document.querySelectorAll('.remove-exception-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const index = parseInt(btn.dataset.index);
+                        this.removeException(index);
+                    });
+                });
+            },
+            
+            // Удаление исключения по индексу
+            removeException: function(index) {
+                this.excludedIpHashes.splice(index, 1);
+                localStorage.setItem('excludedIpHashes', JSON.stringify(this.excludedIpHashes));
+                this.renderExceptions();
+                this.refreshConnections();
+                this.showToast('Исключение удалено', 'success');
+            },
+            
+            // Показать детали соединения
+            showConnectionDetails: function(conn) {
+                document.getElementById('modalIp').textContent = conn.ip;
+                document.getElementById('modalPort').textContent = conn.port;
+                document.getElementById('modalCity').textContent = conn.city;
+                document.getElementById('modalCountry').textContent = conn.country;
+                document.getElementById('modalTime').textContent = conn.timestamp.toLocaleString();
+                document.getElementById('modalStatus').innerHTML = conn.isExcluded ? 
+                    '<span class="badge bg-danger">Исключен</span>' : 
+                    '<span class="badge bg-success">Активен</span>';
+                
+                const modal = new bootstrap.Modal(document.getElementById('connectionModal'));
+                modal.show();
+            },
+            
+            // Обновление списка соединений
+            refreshConnections: function() {
+                const connections = this.generateConnections(10);
+                this.renderConnections(connections);
+            },
+            
+            // Показать уведомление
+            showToast: function(message, type = 'info') {
+                // Создаем временное уведомление
+                const toastEl = document.createElement('div');
+                toastEl.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+                toastEl.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 250px;';
+                toastEl.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                document.body.appendChild(toastEl);
+                
+                // Автоматическое удаление через 3 секунды
+                setTimeout(() => {
+                    toastEl.remove();
+                }, 3000);
+            },
+            
+            // Инициализация приложения
+            init: function() {
+                // Инициализируем данные
+                this.refreshConnections();
+                this.renderExceptions();
+                
+                // Обработчик кнопки обновления
+                document.getElementById('refreshBtn').addEventListener('click', () => {
+                    this.refreshConnections();
+                    this.showToast('Соединения обновлены', 'success');
+                });
+                
+                // Обработчик добавления IP в исключения
+                document.getElementById('addIpBtn').addEventListener('click', async () => {
+                    const ipInput = document.getElementById('ipInput');
+                    const ip = ipInput.value.trim();
+                    
+                    if (!ip) {
+                        this.showToast('Введите IP-адрес', 'warning');
+                        return;
+                    }
+                    
+                    const result = await this.addIpToExclusions(ip);
+                    
+                    if (result.success) {
+                        ipInput.value = '';
+                        this.renderExceptions();
+                        this.refreshConnections();
+                        this.showToast(result.message, 'success');
+                    } else {
+                        this.showToast(result.message, 'danger');
+                    }
+                });
+                
+                // Обработчик проверки IP
+                document.getElementById('checkIpBtn').addEventListener('click', () => {
+                    const ipInput = document.getElementById('checkIpInput');
+                    const ip = ipInput.value.trim();
+                    
+                    if (!ip) {
+                        this.showToast('Введите IP-адрес для проверки', 'warning');
+                        return;
+                    }
+                    
+                    if (!this.isValidIp(ip)) {
+                        document.getElementById('checkResult').innerHTML = 
+                            '<div class="alert alert-danger">Неверный формат IP-адреса</div>';
+                        return;
+                    }
+                    
+                    const isExcluded = this.checkIfIpExcluded(ip);
+                    
+                    if (isExcluded) {
+                        document.getElementById('checkResult').innerHTML = 
+                            '<div class="alert alert-danger"><i class="bi bi-slash-circle"></i> Этот IP в списке исключений</div>';
+                    } else {
+                        document.getElementById('checkResult').innerHTML = 
+                            '<div class="alert alert-success"><i class="bi bi-check-circle"></i> Этот IP не в списке исключений</div>';
+                    }
+                });
+                
+                // Обработчик очистки исключений
+                document.getElementById('clearExceptionsBtn').addEventListener('click', () => {
+                    if (confirm('Вы уверены, что хотите очистить все исключения?')) {
+                        const result = this.clearAllExceptions();
+                        this.renderExceptions();
+                        this.refreshConnections();
+                        this.showToast(result.message, 'success');
+                    }
+                });
+                
+                // Разрешаем добавлять IP по нажатию Enter
+                document.getElementById('ipInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        document.getElementById('addIpBtn').click();
+                    }
+                });
+                
+                // Показываем начальное уведомление
+                setTimeout(() => {
+                    this.showToast('Добро пожаловать в монитор соединений!', 'info');
+                }, 500);
+            }
+        };
+        
+        // Инициализация приложения после загрузки страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            App.init();
+        });
+    </script>
+</body>
+</html>
